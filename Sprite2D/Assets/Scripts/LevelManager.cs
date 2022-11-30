@@ -24,11 +24,18 @@ public class LevelManager : MonoBehaviour
 
     public bool respawning;
 
+    public TMP_Text livesText;
+    public float startingLives;
+    public float currentLives;
+
     void Start()
     {
         player = FindObjectOfType<Char>(); //New type of function other than getcomponent
         coinText.text = "Coins: " + coinCount;
         healthcount = maxhealth;
+
+        currentLives = startingLives;
+        livesText.text = "Lives x " + currentLives;
 
     } 
 
@@ -37,13 +44,21 @@ public class LevelManager : MonoBehaviour
     {
         if(healthcount <= 0 && !respawning)
         {
-            Respawn();
-            respawning = true;
+           Respawn();
+           respawning = true;
         }
     }
     public void Respawn()
     {
-        StartCoroutine("RespawnCo"); //Call coroutinbe
+        currentLives -= 1.0f;
+        livesText.text = "Lives x " + currentLives;
+        if (currentLives >= 1.0f)
+        {
+            StartCoroutine("RespawnCo"); //Call coroutinbe
+        } else
+        {
+            player.gameObject.SetActive(false);
+        }
     }
 
     public void coinsAdd(int addCoin)
