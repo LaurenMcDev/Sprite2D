@@ -6,7 +6,7 @@ public class Char : MonoBehaviour
 {
     public float moveSpeed; //Speed variable
     public Rigidbody2D myRigidBody; //Character rigidbody
-    public float direction = 0f; //What direction are we going in?
+    public float direction = 0f; //What direction are we going in? = Input.GetAxis("Horizontal");
     public float jumpSpeed;
     // Start is called before the first frame update
     public Transform playerPoint; //Everything has a transform (position) component
@@ -17,30 +17,28 @@ public class Char : MonoBehaviour
     //You can hard code radius
     //Serializedfield means 
 
-    public bool onGround = false;
+    public bool onGround = false; //check for on-ground so char doesnt fall through the floor
 
-    public int doubleJump = 0;
+    public int doubleJump = 0; //check if player can double jump (only once and ground false)
 
 
     [SerializeField] bool canDouble = false;
 
     public Animator myAnim;
 
-    public Vector3 respawnPos;
+    public Vector3 respawnPos; //changes with flags
 
     public LevelManager lvlManager;
 
-    public bool canClimb = true;
-
     public float wait;
 
-    public Stair stairs;
+    public Rigidbody2D rg; //Two rigidbodies?
 
-    public Rigidbody2D rg;
+    public Switch redswitch;
     void Start()
     {
         // myRigidBody = GetComponent<Rigidbody2D>(); //Get correct component
-        respawnPos = transform.position;
+        respawnPos = transform.position; //Original position
 
     }
 
@@ -51,7 +49,8 @@ public class Char : MonoBehaviour
         myAnim = GetComponent<Animator>();
 
         lvlManager = FindObjectOfType<LevelManager>();
-        stairs = FindObjectOfType<Stair>();
+
+        redswitch = FindObjectOfType<Switch>();
 
 
     }
@@ -59,14 +58,14 @@ public class Char : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        onGround = Physics2D.OverlapCircle(playerPoint.position, groundRadius, groundLayer);
+        onGround = Physics2D.OverlapCircle(playerPoint.position, groundRadius, groundLayer); //circle radius for on gound
         Debug.Log(onGround);
 
 
         direction = Input.GetAxis("Horizontal");
-        if (direction > 0f)
+        if (direction > 0f) //Going right
         {
-            myRigidBody.velocity = new Vector2(direction * moveSpeed, myRigidBody.velocity.y);
+            myRigidBody.velocity = new Vector2(direction * moveSpeed, myRigidBody.velocity.y); //Rigidbody new velocity x, y
             if (transform.localScale.x < 0)
             {
                 transform.localScale = new Vector2(-transform.localScale.x, transform.localScale.y);
@@ -78,11 +77,11 @@ public class Char : MonoBehaviour
 
             if (transform.localScale.x > 0)
             {
-                transform.localScale = new Vector2(-transform.localScale.x, transform.localScale.y);
+                transform.localScale = new Vector2(-transform.localScale.x, transform.localScale.y); //Transform.position.x?
             }
         }
 
-            if (Input.GetButtonDown("Jump") && onGround)
+            if (Input.GetButtonDown("Jump") && onGround) //if on ground and button pressed
         {
             myRigidBody.velocity = new Vector2(myRigidBody.velocity.x, jumpSpeed);
             canDouble = true;
@@ -95,12 +94,6 @@ public class Char : MonoBehaviour
 
         myAnim.SetFloat("speed", Mathf.Abs(myRigidBody.velocity.x));
         myAnim.SetBool("grounded", onGround);
-
-
-        // else if(doubleJump >= 2)
-        // {
-        //     doubleJump = 0;
-        // }
 
 
 
@@ -136,31 +129,26 @@ public class Char : MonoBehaviour
            respawnPos = other.transform.position;
         }
 
-        if (other.tag == "stair") //Bouncing platform
+        if(other.tag == "bounce")
         {
-
-            // myRigidBody.position = new Vector2(stairs.gameObject.transform.position.x, stairs.gameObject.transform.position.y); //Teleport to last instance
             myRigidBody.velocity = new Vector2(myRigidBody.velocity.x, jumpSpeed);
-
         }
+            
     }
 
     private void OnCollisionEnter2D(Collision2D other)
    {
-       if (other.gameObject.tag == "MovePlat")
+        if (other.gameObject.tag == "MovePlat")
         {
             // transform.parent = other.transform; //Tiny size
 
             transform.SetParent(other.gameObject.transform, true);
 
-
-            //breaking blocks     other.collider.transform.SetParent(transform);
-        } 
-
-         //breaking blocks other.collider.transform.SetParent(transform);
+            //breaking blocks other.collider.transform.SetParent(transform);
+        }
     }
 
-    private void OnCollisionExit2D(Collision2D other)
+    public void OnCollisionExit2D(Collision2D other)
     {
         if (other.gameObject.tag == "MovePlat")
         {
@@ -169,11 +157,5 @@ public class Char : MonoBehaviour
            //breaking blocks  other.collider.transform.SetParent(null); 
         }
 }
-
-    /*         
-            //myRigidBody.transform.position = new Vector2(other.rigidbody.position.x, other.rigidbody.position.y);
-              //transform.localScale = new Vector3(scale.x, scale.y, scale.z);    
-   
-    } */
 }
 

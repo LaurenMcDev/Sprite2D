@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Squish : MonoBehaviour
 {
     public Sprite hear1, hear2, hear3;
-    public Image  h1, h2, h3;
+    public Image h1, h2, h3;
     public int currentHealth, maxHealth, damage;
     public float currentPosx, enemyPos;
     public bool display;
@@ -15,12 +15,15 @@ public class Squish : MonoBehaviour
 
     public Rigidbody2D playerRigid;
     public float bounceForce;
+
+   
     // Start is called before the first frame update
     void Start()
     {
         currentHealth = maxHealth;
         display = false;
         playerRigid = transform.parent.GetComponent<Rigidbody2D>();
+
     }
 
     // Update is called once per frame
@@ -32,10 +35,12 @@ public class Squish : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "enemy")
+
+            Debug.Log("enter");
         {
             currentHealth -= damage;
             display = true;
-            playerRigid.velocity = new Vector3(playerRigid.velocity.x, bounceForce, 0f);
+           playerRigid.velocity = new Vector3(playerRigid.velocity.x, bounceForce, 0f);
             if (display == true)
             {
                 if (currentHealth >= maxHealth)

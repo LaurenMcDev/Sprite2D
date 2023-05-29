@@ -32,9 +32,9 @@ public class LevelManager : MonoBehaviour
     {
         player = FindObjectOfType<Char>(); //New type of function other than getcomponent
         coinText.text = "Coins: " + coinCount;
-        healthcount = maxhealth;
+        healthcount = maxhealth; //Begin with full health
 
-        currentLives = startingLives;
+        currentLives = startingLives; //Begin with full lives
         livesText.text = "Lives x " + currentLives;
 
     } 
@@ -50,8 +50,8 @@ public class LevelManager : MonoBehaviour
     }
     public void Respawn()
     {
-        currentLives -= 1.0f;
-        livesText.text = "Lives x " + currentLives;
+        currentLives -= 1.0f; //This could be set elsehwere, decrease lives by 1 because its time to respawn.
+        livesText.text = "Lives x " + currentLives; //This could be set elsewhere
         if (currentLives >= 1.0f)
         {
             StartCoroutine("RespawnCo"); //Call coroutinbe
@@ -70,12 +70,12 @@ public class LevelManager : MonoBehaviour
     public IEnumerator RespawnCo() //Coroutine 
     { 
         player.gameObject.SetActive(false); //Take the player (char) gameobject and set active to false
-        Instantiate(deathPart, player.transform.position, player.transform.rotation); //Create gameObject (see declaration)
+        Instantiate(deathPart, player.transform.position, player.transform.rotation); //Create gameObject (see declaration) the particles
 
         yield return new WaitForSeconds(wait); //Coroutine purpose, wait, set seconds in unity script component.
-        healthcount = maxhealth;
-        respawning = false;
-        heart();
+        healthcount = maxhealth; //Restart health
+        respawning = false; //Set to false because it was just called
+        heart(); //Call heart method and update graphic
 
         player.transform.position = player.respawnPos; //Check respawnPos variable in char script
         player.gameObject.SetActive(true); //Set back to true
@@ -84,7 +84,7 @@ public class LevelManager : MonoBehaviour
     public void HurtPlayer(int damagetaken)
     {
         healthcount -= damagetaken;
-        heart();
+        heart(); //See heart method
     }
     public void heart()
     {
