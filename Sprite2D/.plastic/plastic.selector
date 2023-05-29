@@ -1,0 +1,4 @@
+repository "Sprite2D@reviveearly@cloud"
+  path "/"
+    br "/main"
+    co "/main"

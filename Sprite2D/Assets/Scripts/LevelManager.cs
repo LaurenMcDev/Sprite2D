@@ -28,6 +28,7 @@ public class LevelManager : MonoBehaviour
     public float startingLives;
     public float currentLives;
 
+    public int switchint = 0;
     void Start()
     {
         player = FindObjectOfType<Char>(); //New type of function other than getcomponent

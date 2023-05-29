@@ -17,9 +17,7 @@ public class Char : MonoBehaviour
     //You can hard code radius
     //Serializedfield means 
 
-    public bool onGround = false; //check for on-ground so char doesnt fall through the floor
-
-    public int doubleJump = 0; //check if player can double jump (only once and ground false)
+    public bool onGround = true; //check for on-ground so char doesnt fall through the floor
 
 
     [SerializeField] bool canDouble = false;
@@ -32,9 +30,15 @@ public class Char : MonoBehaviour
 
     public float wait;
 
-    public Rigidbody2D rg; //Two rigidbodies?
 
     public Switch redswitch;
+
+    public Lock lock1;
+
+    public GameObject lock2;
+
+    bool switcha = false;
+
     void Start()
     {
         // myRigidBody = GetComponent<Rigidbody2D>(); //Get correct component
@@ -45,12 +49,12 @@ public class Char : MonoBehaviour
     private void Awake()
     {
         myRigidBody = GetComponent<Rigidbody2D>();
-        rg = GetComponent<Rigidbody2D>();
         myAnim = GetComponent<Animator>();
 
         lvlManager = FindObjectOfType<LevelManager>();
 
         redswitch = FindObjectOfType<Switch>();
+        lock1 = FindObjectOfType<Lock>();
 
 
     }
@@ -90,6 +94,11 @@ public class Char : MonoBehaviour
         {
             myRigidBody.velocity = new Vector2(myRigidBody.velocity.x, jumpSpeed);
             canDouble = false;
+        } 
+            if(switcha && Input.GetButtonDown("Jump"))
+        {;
+            redswitch.changeSprite();
+            lock1.gameObject.SetActive(false);
         }
 
         myAnim.SetFloat("speed", Mathf.Abs(myRigidBody.velocity.x));
@@ -133,7 +142,22 @@ public class Char : MonoBehaviour
         {
             myRigidBody.velocity = new Vector2(myRigidBody.velocity.x, jumpSpeed);
         }
-            
+
+        if ( other.tag == "switch")
+        {
+            switcha = true;
+            //lock1.gameObject.SetActive(false);
+        }
+
+
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.tag == "switch")
+        {
+            switcha = false;
+        }    
     }
 
     private void OnCollisionEnter2D(Collision2D other)
